@@ -2,12 +2,17 @@
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed = 6f;
+    public float initSpeed = 6f;
+    public float currentSpeed;
     Vector3 movement;
     Animator anim;
     Rigidbody playerRigidbody;
     int floorMask;
     float camRayLength = 100f;
+
+    private bool isMultiplied = false;
+    private float timer = 0f;
+    public float powerUpDelay = 7f;
 
     private void Awake()
     {
@@ -19,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         /* komponen Rigidbody object Player */
         playerRigidbody = GetComponent<Rigidbody>();
+        currentSpeed = initSpeed;
     }
 
     private void FixedUpdate()
@@ -34,6 +40,17 @@ public class PlayerMovement : MonoBehaviour
         /* Panggil method Turning untuk menngatur arah object Player menghadap */
         Turning();
         Animating(h, v);
+
+        if (isMultiplied)
+        {
+            timer += Time.deltaTime;
+            if (timer > powerUpDelay)
+            {
+                currentSpeed = initSpeed;
+                isMultiplied = false;
+                timer = 0f;
+            }
+        }
     }
 
     public void Move(float h, float v)
@@ -45,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         movement.Set(h, 0f, v);
 
         /* movement di-normalize */
-        movement = movement.normalized * speed * Time.deltaTime;
+        movement = movement.normalized * currentSpeed * Time.deltaTime;
 
         /* Memindahkan object player ke posisi baru*/
         playerRigidbody.MovePosition(transform.position + movement);
@@ -78,5 +95,12 @@ public class PlayerMovement : MonoBehaviour
         // MENGUBAH NILAI BOOLEAN IsWalking BERDASARKAN NILAI h DAN v
         bool walking = h != 0f || v != 0f;
         anim.SetBool("IsWalking", walking);
+    }
+
+    public void MultiplySpeed(float multiplier)
+    {
+        //METHOD MEMPERCEPAT KECEPATAN GERAK SECEPAT multiplier
+        currentSpeed *= multiplier;
+        isMultiplied = true;
     }
 }

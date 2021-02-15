@@ -63,6 +63,17 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    public void Heal(int amount)
+    {
+        // FUNGSI UNTUK MENAMBAH NYAWA PLAYER
+        currentHealth += amount;
+        if (currentHealth > startingHealth)
+        {
+            /* Antisipasi nyawa menjadi lebih besar dari nyawa awal */
+            currentHealth = startingHealth;
+        }
+        healthSlider.value = currentHealth;
+    }
 
     void Death()
     {
